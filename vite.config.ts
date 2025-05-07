@@ -6,6 +6,7 @@ export default defineConfig({
   plugins: [
     react(),
     federation({
+      name: "listApp",
       remotes: {
         detailApp: "http://localhost:3000/assets/remoteEntry.js",
       },

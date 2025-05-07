@@ -1,5 +1,7 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, lazy, Suspense } from "react";
 import { Tarjeta } from "tarjeta-lib";
+
+const CharacterDetail = lazy(() => import("detailApp/CharacterDetail"));
 
 type Character = {
   id: number;
@@ -49,10 +51,26 @@ export const CharacterList = () => {
 
       {selectedCharacter && (
         <div className="mt-8">
-          <h2 className="text-xl font-bold">Personaje seleccionado:</h2>
-          <pre className="bg-gray-100 p-4 rounded">
-            {JSON.stringify(selectedCharacter, null, 2)}
-          </pre>
+          <Suspense
+            fallback={
+              <p className="text-center text-gray-600">Cargando detalle...</p>
+            }
+          >
+            <CharacterDetail
+              nombre={selectedCharacter.name}
+              imagen={selectedCharacter.image}
+              especie={selectedCharacter.species}
+              ultimaUbicacion={selectedCharacter.location.name}
+              primeraAparicion={selectedCharacter.origin.name}
+              estado={
+                selectedCharacter.status === "Alive"
+                  ? "Vivo"
+                  : selectedCharacter.status === "Dead"
+                  ? "Muerto"
+                  : "Desconocido"
+              }
+            />
+          </Suspense>
         </div>
       )}
     </div>
