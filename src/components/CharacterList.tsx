@@ -1,4 +1,4 @@
-import { useEffect, useState, lazy, Suspense } from "react";
+import { useEffect, useState, Suspense, lazy } from "react";
 import { Tarjeta } from "tarjeta-lib";
 
 const CharacterDetail = lazy(() => import("detailApp/CharacterDetail"));
@@ -8,17 +8,11 @@ type Character = {
   name: string;
   species: string;
   image: string;
-  location: { name: string };
-  origin: { name: string };
+  location: { name: string; url: string };
+  origin: { name: string; url: string };
   status: "Alive" | "Dead" | "unknown";
   gender: string;
   episode: string[];
-};
-
-type Episode = {
-  id: number;
-  name: string;
-  episode: string;
 };
 
 export const CharacterList = () => {
@@ -26,7 +20,9 @@ export const CharacterList = () => {
   const [selectedCharacter, setSelectedCharacter] = useState<Character | null>(
     null
   );
-  const [episodes, setEpisodes] = useState<Episode[]>([]);
+  const [episodes, setEpisodes] = useState<
+    { nombre: string; codigo: string }[]
+  >([]);
 
   useEffect(() => {
     fetch("https://rickandmortyapi.com/api/character")
@@ -36,16 +32,16 @@ export const CharacterList = () => {
 
   useEffect(() => {
     if (selectedCharacter) {
-      const episodeIds = selectedCharacter.episode.map((url) =>
-        url.split("/").pop()
-      );
-      const endpoint = `https://rickandmortyapi.com/api/episode/${episodeIds.join(
-        ","
-      )}`;
-
-      fetch(endpoint)
-        .then((res) => res.json())
-        .then((data) => setEpisodes(Array.isArray(data) ? data : [data]));
+      Promise.all(
+        selectedCharacter.episode.map((epUrl) =>
+          fetch(epUrl)
+            .then((res) => res.json())
+            .then((ep) => ({
+              nombre: ep.name,
+              codigo: ep.episode,
+            }))
+        )
+      ).then(setEpisodes);
     }
   }, [selectedCharacter]);
 
@@ -58,8 +54,8 @@ export const CharacterList = () => {
             nombre={char.name}
             especie={char.species}
             imagen={char.image}
-            ultimaUbicacion={char.location.name}
-            primeraAparicion={char.origin.name}
+            ubicacion={char.location.name}
+            origen={char.origin.name}
             estado={
               char.status === "Alive"
                 ? "Vivo"
@@ -74,13 +70,13 @@ export const CharacterList = () => {
       </div>
 
       {selectedCharacter && (
-        <Suspense fallback={<div>Cargando detalle...</div>}>
+        <Suspense
+          fallback={<p className="mt-6 text-center">Cargando detalle...</p>}
+        >
           <CharacterDetail
             nombre={selectedCharacter.name}
             imagen={selectedCharacter.image}
             especie={selectedCharacter.species}
-            ultimaUbicacion={selectedCharacter.location.name}
-            primeraAparicion={selectedCharacter.origin.name}
             estado={
               selectedCharacter.status === "Alive"
                 ? "Vivo"
@@ -89,6 +85,8 @@ export const CharacterList = () => {
                 : "Desconocido"
             }
             genero={selectedCharacter.gender}
+            origen={selectedCharacter.origin.name}
+            ubicacion={selectedCharacter.location.name}
             episodios={episodes}
           />
         </Suspense>

@@ -1,5 +1,4 @@
-import "./App.css";
-import { CharacterList } from "./components/characterlist";
+import { CharacterList } from "./components/CharacterList";
 
 function App() {
   return (
