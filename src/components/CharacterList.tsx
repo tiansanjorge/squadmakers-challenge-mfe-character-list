@@ -1,5 +1,6 @@
 import { useEffect, useState, Suspense, lazy } from "react";
 import { Tarjeta } from "tarjeta-lib";
+import "../index.css";
 
 const CharacterDetail = lazy(() => import("detailApp/CharacterDetail"));
 
@@ -15,7 +16,7 @@ type Character = {
   episode: string[];
 };
 
-export const CharacterList = () => {
+const CharacterList = () => {
   const [characters, setCharacters] = useState<Character[]>([]);
   const [selectedCharacter, setSelectedCharacter] = useState<Character | null>(
     null
@@ -94,3 +95,5 @@ export const CharacterList = () => {
     </div>
   );
 };
+
+export default CharacterList;
