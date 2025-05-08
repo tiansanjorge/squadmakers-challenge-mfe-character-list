@@ -6,7 +6,11 @@ export default {
     "./node_modules/tarjeta-lib/dist/components/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
-    extend: {},
+    extend: {
+      fontFamily: {
+        montserrat: ["Montserrat", "sans-serif"],
+      },
+    },
   },
   plugins: [],
 };
