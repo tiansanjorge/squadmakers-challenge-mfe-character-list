@@ -1,3 +1,4 @@
+import React from "react";
 import { useEffect, useState, Suspense, lazy } from "react";
 import { Tarjeta } from "tarjeta-lib";
 import { SlidersHorizontalIcon } from "lucide-react";
