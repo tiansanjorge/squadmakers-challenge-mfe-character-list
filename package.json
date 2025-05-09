@@ -12,15 +12,20 @@
   },
   "dependencies": {
     "@originjs/vite-plugin-federation": "^1.4.1",
+    "@reduxjs/toolkit": "^2.8.1",
     "lucide-react": "^0.508.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
+    "react-redux": "^9.2.0",
+    "react-router-dom": "^7.6.0",
+    "redux-persist": "^6.0.0",
     "tarjeta-lib": "file:tarjeta-lib-1.0.0.tgz"
   },
   "devDependencies": {
     "@eslint/js": "^9.25.0",
     "@types/react": "^19.1.2",
     "@types/react-dom": "^19.1.2",
+    "@types/react-router-dom": "^5.3.3",
     "@vitejs/plugin-react": "^4.4.1",
     "autoprefixer": "^10.4.21",
     "eslint": "^9.25.0",

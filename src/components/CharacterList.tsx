@@ -3,6 +3,10 @@ import { Tarjeta } from "tarjeta-lib";
 import { SlidersHorizontalIcon } from "lucide-react";
 import { Modal } from "../components/Modal";
 import { AdvancedFilters } from "../components/AdvancedFilters";
+import { useDispatch, useSelector } from "react-redux";
+import { toggleFavorite } from "../store/favoritesSlice";
+import type { RootState } from "../store";
+
 import "../index.css";
 
 const CharacterDetail = lazy(() => import("detailApp/CharacterDetail"));
@@ -26,6 +30,9 @@ type Filters = {
 };
 
 const CharacterList = () => {
+  const dispatch = useDispatch();
+  const favoritos = useSelector((state: RootState) => state.favorites);
+
   const [characters, setCharacters] = useState<Character[]>([]);
   const [selectedCharacter, setSelectedCharacter] = useState<Character | null>(
     null
@@ -62,25 +69,30 @@ const CharacterList = () => {
     }
   }, [selectedCharacter]);
 
-  const filteredCharacters = characters.filter((char) => {
-    const matchEspecie =
-      filters.especie.length === 0 || filters.especie.includes(char.species);
+  const filteredCharacters = characters
+    .filter((char) => {
+      const matchEspecie =
+        filters.especie.length === 0 || filters.especie.includes(char.species);
+      const matchGenero =
+        filters.genero.length === 0 || filters.genero.includes(char.gender);
+      const matchEstado =
+        filters.estado.length === 0 || filters.estado.includes(char.status);
 
-    const matchGenero =
-      filters.genero.length === 0 || filters.genero.includes(char.gender);
+      return matchEspecie && matchGenero && matchEstado;
+    })
+    .filter((char) => {
+      if (activo === "favoritos") {
+        return favoritos.some((f) => f.id === char.id);
+      }
+      return true;
+    });
 
-    const estadoTraducido =
-      char.status === "Alive"
-        ? "Vivo"
-        : char.status === "Dead"
-        ? "Muerto"
-        : "Desconocido";
-
-    const matchEstado =
-      filters.estado.length === 0 || filters.estado.includes(estadoTraducido);
-
-    return matchEspecie && matchGenero && matchEstado;
-  });
+  const removeFiltro = (tipo: keyof Filters, valor: string) => {
+    setFilters((prev) => ({
+      ...prev,
+      [tipo]: prev[tipo].filter((v) => v !== valor),
+    }));
+  };
 
   return (
     <div className="p-8">
@@ -122,17 +134,22 @@ const CharacterList = () => {
             Filtros aplicados
           </p>
           <div className="flex flex-wrap gap-2">
-            {["Humano", "Femenino", "Muerto"].map((filtro) => (
-              <span
-                key={filtro}
-                className="flex items-center bg-gray-200 text-gray-800 text-sm px-3 py-1 rounded-full"
-              >
-                {filtro}
-                <button className="ml-2 text-gray-600 hover:text-gray-800">
-                  ✕
-                </button>
-              </span>
-            ))}
+            {(["especie", "genero", "estado"] as const).flatMap((tipo) =>
+              filters[tipo].map((valor) => (
+                <span
+                  key={`${tipo}-${valor}`}
+                  className="flex items-center bg-gray-200 text-gray-800 text-sm px-3 py-1 rounded-full"
+                >
+                  {valor}
+                  <button
+                    onClick={() => removeFiltro(tipo, valor)}
+                    className="ml-2 text-gray-600 hover:text-gray-800"
+                  >
+                    ✕
+                  </button>
+                </span>
+              ))
+            )}
           </div>
         </div>
 
@@ -142,27 +159,61 @@ const CharacterList = () => {
       </div>
 
       {/* Lista de personajes */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-        {filteredCharacters.map((char) => (
-          <Tarjeta
-            key={char.id}
-            nombre={char.name}
-            especie={char.species}
-            imagen={char.image}
-            ubicacion={char.location.name}
-            origen={char.origin.name}
-            estado={
-              char.status === "Alive"
-                ? "Vivo"
-                : char.status === "Dead"
-                ? "Muerto"
-                : "Desconocido"
-            }
-            esFavorito={false}
-            onClick={() => setSelectedCharacter(char)}
-          />
-        ))}
-      </div>
+      {filteredCharacters.length === 0 ? (
+        <div className="text-center py-12">
+          <h2 className="text-2xl font-bold text-gray-800 mb-2">Oh no!</h2>
+          <p className="text-gray-600 mb-6">¡Pareces perdido en tu viaje!</p>
+          <button
+            onClick={() => {
+              setFilters({ especie: [], genero: [], estado: [] });
+              setActivo("todos");
+            }}
+            className="bg-white border border-green-900 text-green-900 font-semibold py-2 px-6 rounded-full shadow-sm hover:bg-gray-100 transition"
+          >
+            Limpiar filtros
+          </button>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+          {filteredCharacters.map((char) => (
+            <Tarjeta
+              key={char.id}
+              nombre={char.name}
+              especie={char.species}
+              imagen={char.image}
+              ubicacion={char.location.name}
+              origen={char.origin.name}
+              estado={
+                char.status === "Alive"
+                  ? "Vivo"
+                  : char.status === "Dead"
+                  ? "Muerto"
+                  : "Desconocido"
+              }
+              esFavorito={favoritos.some((f) => f.id === char.id)}
+              onClick={() => setSelectedCharacter(char)}
+              onToggleFavorito={() =>
+                dispatch(
+                  toggleFavorite({
+                    id: char.id,
+                    nombre: char.name,
+                    especie: char.species,
+                    imagen: char.image,
+                    ubicacion: char.location.name,
+                    origen: char.origin.name,
+                    estado:
+                      char.status === "Alive"
+                        ? "Vivo"
+                        : char.status === "Dead"
+                        ? "Muerto"
+                        : "Desconocido",
+                  })
+                )
+              }
+            />
+          ))}
+        </div>
+      )}
 
       {selectedCharacter && (
         <Suspense
