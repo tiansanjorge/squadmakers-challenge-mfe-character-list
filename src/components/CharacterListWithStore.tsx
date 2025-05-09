@@ -6,10 +6,15 @@ import CharacterList from "./CharacterList";
 import * as ReactList from "react";
 console.log("React in list:", ReactList);
 
-const CharacterListWithStore = () => (
+type Props = {
+  searchText: string;
+  resetSearch: () => void;
+};
+
+const CharacterListWithStore = ({ searchText, resetSearch }: Props) => (
   <Provider store={store}>
     <PersistGate loading={null} persistor={persistor}>
-      <CharacterList />
+      <CharacterList searchText={searchText} resetSearch={resetSearch} />
     </PersistGate>
   </Provider>
 );

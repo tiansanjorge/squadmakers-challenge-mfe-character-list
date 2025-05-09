@@ -30,7 +30,12 @@ type Filters = {
   estado: string[];
 };
 
-const CharacterList = () => {
+type CharacterListProps = {
+  searchText: string;
+  resetSearch: () => void;
+};
+
+const CharacterList = ({ searchText, resetSearch }: CharacterListProps) => {
   const dispatch = useDispatch();
   const favoritos = useSelector((state: RootState) => state.favorites);
 
@@ -71,6 +76,9 @@ const CharacterList = () => {
   }, [selectedCharacter]);
 
   const filteredCharacters = characters
+    .filter((char) =>
+      char.name.toLowerCase().includes(searchText.toLowerCase())
+    )
     .filter((char) => {
       const matchEspecie =
         filters.especie.length === 0 || filters.especie.includes(char.species);
@@ -187,6 +195,7 @@ const CharacterList = () => {
                 onClick={() => {
                   setFilters({ especie: [], genero: [], estado: [] });
                   setActivo("todos");
+                  resetSearch();
                 }}
                 className="bg-white border border-green-900 text-green-900 font-semibold py-2 px-6 rounded-full shadow-sm hover:bg-gray-100 transition"
               >
