@@ -9,12 +9,23 @@ export default defineConfig({
       name: "listApp",
       filename: "remoteEntry.js",
       exposes: {
-        "./CharacterList": "./src/components/CharacterList.tsx",
+        "./CharacterList": "./src/components/CharacterListWithStore.tsx",
       },
       remotes: {
         detailApp: "http://localhost:3000/assets/remoteEntry.js",
       },
-      shared: ["react", "react-dom"],
+      shared: {
+        react: {
+          singleton: true,
+          strictVersion: true,
+          requiredVersion: "^19.0.0",
+        },
+        "react-dom": {
+          singleton: true,
+          strictVersion: true,
+          requiredVersion: "^19.0.0",
+        },
+      },
     }),
   ],
   build: {
