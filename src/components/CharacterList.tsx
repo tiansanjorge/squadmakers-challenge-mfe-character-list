@@ -236,28 +236,52 @@ const CharacterList = () => {
         </div>
       )}
 
-      {selectedCharacter && (
+      <Modal
+        isOpen={!!selectedCharacter}
+        onClose={() => setSelectedCharacter(null)}
+      >
         <Suspense
-          fallback={<p className="mt-6 text-center">Cargando detalle...</p>}
+          fallback={<p className="text-center py-8">Cargando detalle...</p>}
         >
-          <CharacterDetail
-            nombre={selectedCharacter.name}
-            imagen={selectedCharacter.image}
-            especie={selectedCharacter.species}
-            estado={
-              selectedCharacter.status === "Alive"
-                ? "Vivo"
-                : selectedCharacter.status === "Dead"
-                ? "Muerto"
-                : "Desconocido"
-            }
-            genero={selectedCharacter.gender}
-            origen={selectedCharacter.origin.name}
-            ubicacion={selectedCharacter.location.name}
-            episodios={episodes}
-          />
+          {selectedCharacter && (
+            <CharacterDetail
+              nombre={selectedCharacter.name}
+              imagen={selectedCharacter.image}
+              especie={selectedCharacter.species}
+              estado={
+                selectedCharacter.status === "Alive"
+                  ? "Vivo"
+                  : selectedCharacter.status === "Dead"
+                  ? "Muerto"
+                  : "Desconocido"
+              }
+              genero={selectedCharacter.gender}
+              origen={selectedCharacter.origin.name}
+              ubicacion={selectedCharacter.location.name}
+              episodios={episodes}
+              esFavorito={favoritos.some((f) => f.id === selectedCharacter.id)}
+              onToggleFavorito={() =>
+                dispatch(
+                  toggleFavorite({
+                    id: selectedCharacter.id,
+                    nombre: selectedCharacter.name,
+                    especie: selectedCharacter.species,
+                    imagen: selectedCharacter.image,
+                    ubicacion: selectedCharacter.location.name,
+                    origen: selectedCharacter.origin.name,
+                    estado:
+                      selectedCharacter.status === "Alive"
+                        ? "Vivo"
+                        : selectedCharacter.status === "Dead"
+                        ? "Muerto"
+                        : "Desconocido",
+                  })
+                )
+              }
+            />
+          )}
         </Suspense>
-      )}
+      </Modal>
 
       <Modal isOpen={showModal} onClose={() => setShowModal(false)}>
         <AdvancedFilters
