@@ -161,17 +161,38 @@ const CharacterList = () => {
       {/* Lista de personajes */}
       {filteredCharacters.length === 0 ? (
         <div className="text-center py-12">
-          <h2 className="text-2xl font-bold text-gray-800 mb-2">Oh no!</h2>
-          <p className="text-gray-600 mb-6">¡Pareces perdido en tu viaje!</p>
-          <button
-            onClick={() => {
-              setFilters({ especie: [], genero: [], estado: [] });
-              setActivo("todos");
-            }}
-            className="bg-white border border-green-900 text-green-900 font-semibold py-2 px-6 rounded-full shadow-sm hover:bg-gray-100 transition"
-          >
-            Limpiar filtros
-          </button>
+          {activo === "favoritos" && favoritos.length === 0 ? (
+            <>
+              <h2 className="text-2xl font-bold text-gray-800 mb-2">
+                Sin favoritos
+              </h2>
+              <p className="text-gray-600 mb-6">
+                Aún no marcaste ningún personaje como favorito.
+              </p>
+              <button
+                onClick={() => setActivo("todos")}
+                className="bg-white border border-green-900 text-green-900 font-semibold py-2 px-6 rounded-full shadow-sm hover:bg-gray-100 transition"
+              >
+                Ver todos los personajes
+              </button>
+            </>
+          ) : (
+            <>
+              <h2 className="text-2xl font-bold text-gray-800 mb-2">Oh no!</h2>
+              <p className="text-gray-600 mb-6">
+                ¡Pareces perdido en tu viaje!
+              </p>
+              <button
+                onClick={() => {
+                  setFilters({ especie: [], genero: [], estado: [] });
+                  setActivo("todos");
+                }}
+                className="bg-white border border-green-900 text-green-900 font-semibold py-2 px-6 rounded-full shadow-sm hover:bg-gray-100 transition"
+              >
+                Limpiar filtros
+              </button>
+            </>
+          )}
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
