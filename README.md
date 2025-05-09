@@ -1,54 +1,39 @@
-# React + TypeScript + Vite
+# Microfrontend: Character List
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Microfrontend que renderiza tarjetas de personajes usando la API pública de Rick & Morty. Utiliza la librería `tarjeta-lib` como dependencia local.
 
-Currently, two official plugins are available:
+## 🚀 Instalación y ejecución
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+```bash
+npm install
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+Para build:
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+```bash
+npm run build
+```
 
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
+## 🏗️ Arquitectura
+
+- App basada en React 19.
+- Webpack + Module Federation para exponer el microfrontend.
+- Uso de Redux + Redux Persist para estado.
+- Componentes reutilizables con `tarjeta-lib`.
+
+## 📦 Dependencias destacadas
+
+- `react`, `react-dom`, `react-redux`
+- `redux-persist`, `@reduxjs/toolkit`
+- `react-router-dom`
+- `tarjeta-lib` (instalado localmente)
+- `lucide-react`
+- `tailwindcss` para estilos
+- ESLint + Testing Library
+
+## ✅ Testing
+
+```bash
+npm run test
 ```
