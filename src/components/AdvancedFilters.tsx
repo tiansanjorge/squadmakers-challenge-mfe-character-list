@@ -90,7 +90,7 @@ export const AdvancedFiltersModal = ({
         <div className="flex justify-center sm:justify-end border-t-2 border-gray-100">
           <button
             onClick={() => onAplicar(filtros)}
-            className="mt-6 sm:mt-4 w-11/12 bg-[#8BC547] text-[#354E18] px-6 py-2 rounded-full font-semibold hover:bg-[#7ab536] transition"
+            className="mt-6 sm:mt-4 w-11/12 sm:w-auto bg-[#8BC547] text-[#354E18] px-6 py-2 rounded-full font-semibold hover:bg-[#7ab536] transition"
           >
             Aplicar filtros
           </button>
