@@ -3,7 +3,6 @@ import { useEffect, useState, Suspense, lazy } from "react";
 import { Tarjeta } from "tarjeta-lib";
 import { SlidersHorizontalIcon } from "lucide-react";
 import { Modal } from "../components/Modal";
-import { AdvancedFilters } from "../components/AdvancedFilters";
 import { useDispatch, useSelector } from "react-redux";
 import { toggleFavorite } from "../store/favoritesSlice";
 import type { RootState } from "../store";
@@ -11,6 +10,7 @@ import detailBg from "../assets/detail-bg.jpg";
 import cross from "../assets/cross.png";
 
 import "../index.css";
+import { AdvancedFiltersModal } from "./AdvancedFilters";
 
 const CharacterDetail = lazy(() => import("detailApp/CharacterDetail"));
 
@@ -26,11 +26,7 @@ type Character = {
   episode: string[];
 };
 
-type Filters = {
-  especie: string[];
-  genero: string[];
-  estado: string[];
-};
+type Filtros = { especie: string[]; estado: string[]; genero: string[] };
 
 type CharacterListProps = {
   searchText: string;
@@ -50,7 +46,7 @@ const CharacterList = ({ searchText, resetSearch }: CharacterListProps) => {
   >([]);
   const [activo, setActivo] = useState<"todos" | "favoritos">("todos");
   const [showModal, setShowModal] = useState(false);
-  const [filters, setFilters] = useState<Filters>({
+  const [filters, setFilters] = useState<Filtros>({
     especie: [],
     genero: [],
     estado: [],
@@ -98,7 +94,7 @@ const CharacterList = ({ searchText, resetSearch }: CharacterListProps) => {
       return true;
     });
 
-  const removeFiltro = (tipo: keyof Filters, valor: string) => {
+  const removeFiltro = (tipo: keyof Filtros, valor: string) => {
     setFilters((prev) => ({
       ...prev,
       [tipo]: prev[tipo].filter((v) => v !== valor),
@@ -309,15 +305,15 @@ const CharacterList = ({ searchText, resetSearch }: CharacterListProps) => {
         </Suspense>
       </Modal>
 
-      <Modal isOpen={showModal} onClose={() => setShowModal(false)}>
-        <AdvancedFilters
-          valoresIniciales={filters}
-          onAplicar={(filtros) => {
-            setFilters(filtros);
-            setShowModal(false);
-          }}
-        />
-      </Modal>
+      <AdvancedFiltersModal
+        isOpen={showModal}
+        onClose={() => setShowModal(false)}
+        valoresIniciales={filters}
+        onAplicar={(f: Filtros) => {
+          setFilters(f);
+          setShowModal(false);
+        }}
+      />
     </>
   );
 };
