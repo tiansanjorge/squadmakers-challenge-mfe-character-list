@@ -1,3 +1,4 @@
+import ReactDOM from "react-dom";
 import React from "react";
 import { X } from "lucide-react";
 
@@ -10,17 +11,18 @@ type ModalProps = {
 export const Modal = ({ isOpen, onClose, children }: ModalProps) => {
   if (!isOpen) return null;
 
-  return (
+  return ReactDOM.createPortal(
     <div className="fixed inset-0 z-50 bg-black bg-opacity-60 flex items-center justify-center">
-      <div className="bg-white rounded-xl p-6 w-full max-w-lg relative shadow-lg">
+      <div className="bg-white rounded-xl w-11/12 sm:w-full sm:max-w-lg relative shadow-lg">
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
+          className="bg-white p-2 rounded-full absolute top-4 right-4 text-gray-500 hover:text-gray-700 z-10"
         >
           <X className="w-5 h-5" />
         </button>
         {children}
       </div>
-    </div>
+    </div>,
+    document.body
   );
 };

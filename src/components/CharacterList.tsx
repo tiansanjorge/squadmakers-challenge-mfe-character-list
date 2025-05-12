@@ -7,6 +7,8 @@ import { AdvancedFilters } from "../components/AdvancedFilters";
 import { useDispatch, useSelector } from "react-redux";
 import { toggleFavorite } from "../store/favoritesSlice";
 import type { RootState } from "../store";
+import detailBg from "../assets/detail-bg.jpg";
+import cross from "../assets/cross.png";
 
 import "../index.css";
 
@@ -104,148 +106,161 @@ const CharacterList = ({ searchText, resetSearch }: CharacterListProps) => {
   };
 
   return (
-    <div className="p-8">
-      {/* Pestañas & Boton Filtros */}
-      <div className="flex items-center justify-between px-4 py-2 bg-white rounded-full shadow-sm max-w-md mx-auto">
-        <div className="flex space-x-4">
+    <>
+      <div className="p-6 w-full  xl:w-10/12 2xl:w-9/12 m-auto">
+        {/* Pestañas & Boton Filtros */}
+        <div className="flex items-center justify-between mx-auto">
+          <div className="flex gap-2 bg-white rounded-full shadow-sm p-1 ">
+            <button
+              onClick={() => setActivo("todos")}
+              className={`px-4 py-2 rounded-full text-sm font-semibold ${
+                activo === "todos"
+                  ? "bg-[#B6DA8B] text-[#354E18]"
+                  : "text-gray-500"
+              }`}
+            >
+              Todos
+            </button>
+            <button
+              onClick={() => setActivo("favoritos")}
+              className={`px-4 py-2 rounded-full text-sm font-semibold ${
+                activo === "favoritos"
+                  ? "bg-[#B6DA8B] text-[#354E18]"
+                  : "text-gray-500"
+              }`}
+            >
+              Favoritos
+            </button>
+          </div>
+
           <button
-            onClick={() => setActivo("todos")}
-            className={`px-4 py-1 rounded-full text-sm font-medium ${
-              activo === "todos" ? "bg-lime-300 text-black" : "text-gray-700"
-            }`}
+            onClick={() => setShowModal(true)}
+            className="w-10 h-10 rounded-full bg-white shadow border border-gray-300 flex items-center justify-center"
           >
-            Todos
-          </button>
-          <button
-            onClick={() => setActivo("favoritos")}
-            className={`px-4 py-1 rounded-full text-sm font-medium ${
-              activo === "favoritos"
-                ? "bg-lime-300 text-black"
-                : "text-gray-700"
-            }`}
-          >
-            Favoritos
+            <SlidersHorizontalIcon className="w-4 h-4 text-gray-500" />
           </button>
         </div>
 
-        <button
-          onClick={() => setShowModal(true)}
-          className="w-8 h-8 rounded-full bg-white shadow border border-gray-300 flex items-center justify-center"
-        >
-          <SlidersHorizontalIcon className="w-4 h-4 text-gray-500" />
-        </button>
-      </div>
-
-      {/* Filtros aplicados + total */}
-      <div className="flex flex-wrap justify-between items-start gap-4 py-6">
-        <div>
-          <p className="text-sm font-semibold text-gray-800 mb-2">
-            Filtros aplicados
-          </p>
-          <div className="flex flex-wrap gap-2">
-            {(["especie", "genero", "estado"] as const).flatMap((tipo) =>
-              filters[tipo].map((valor) => (
-                <span
-                  key={`${tipo}-${valor}`}
-                  className="flex items-center bg-gray-200 text-gray-800 text-sm px-3 py-1 rounded-full"
-                >
-                  {valor}
-                  <button
-                    onClick={() => removeFiltro(tipo, valor)}
-                    className="ml-2 text-gray-600 hover:text-gray-800"
-                  >
-                    ✕
-                  </button>
-                </span>
-              ))
+        {/* Filtros aplicados + total */}
+        <div className="flex flex-wrap justify-between items-start gap-4 py-6">
+          <div>
+            {(filters.especie.length > 0 ||
+              filters.genero.length > 0 ||
+              filters.estado.length > 0) && (
+              <p className="text-sm font-semibold text-gray-800 mb-2">
+                Filtros aplicados
+              </p>
             )}
+            <div className="flex flex-wrap gap-2 font-semibold">
+              {(["especie", "genero", "estado"] as const).flatMap((tipo) =>
+                filters[tipo].map((valor) => (
+                  <span
+                    key={`${tipo}-${valor}`}
+                    className="flex gap-2 items-center bg-[#C7CBC2] text-[#333630] text-sm px-3 py-1 rounded-full"
+                  >
+                    {valor}
+                    <button
+                      onClick={() => removeFiltro(tipo, valor)}
+                      className="text-gray-600 hover:text-gray-800"
+                    >
+                      <img src={cross} alt="Cerrar" className="w-4 h-4" />
+                    </button>
+                  </span>
+                ))
+              )}
+            </div>
+          </div>
+
+          <div className="text-sm text-gray-700 font-semibold whitespace-nowrap">
+            {filteredCharacters.length} personajes
           </div>
         </div>
 
-        <div className="text-sm text-gray-700 font-semibold whitespace-nowrap">
-          {filteredCharacters.length} personajes
-        </div>
+        {/* Lista de personajes */}
+        {filteredCharacters.length === 0 ? (
+          <div className="text-center py-12">
+            {activo === "favoritos" && favoritos.length === 0 ? (
+              <>
+                <h2 className="text-2xl font-bold text-gray-800 mb-2">
+                  Sin favoritos
+                </h2>
+                <p className="font-semibold text-gray-600 mb-6">
+                  Aún no marcaste ningún personaje como favorito.
+                </p>
+                <button
+                  onClick={() => setActivo("todos")}
+                  className="bg-white text-green-900 font-semibold py-2 px-6 rounded-full shadow-sm hover:bg-gray-100 transition"
+                >
+                  Ver todos los personajes
+                </button>
+              </>
+            ) : (
+              <>
+                <h2 className="text-2xl font-bold text-gray-800 mb-2">
+                  Oh no!
+                </h2>
+                <p className=" font-semibold text-gray-600 mb-6">
+                  ¡Pareces perdido en tu viaje!
+                </p>
+                <button
+                  onClick={() => {
+                    setFilters({ especie: [], genero: [], estado: [] });
+                    setActivo("todos");
+                    resetSearch();
+                  }}
+                  className="bg-white text-green-900 font-semibold py-2 px-6 rounded-full shadow-sm hover:bg-gray-100 transition"
+                >
+                  Limpiar filtros
+                </button>
+              </>
+            )}
+          </div>
+        ) : (
+          <div className="flex flex-wrap gap-y-5 justify-between">
+            {filteredCharacters.map((char) => (
+              <div
+                key={char.id}
+                className="w-full lg:w-[49%] 2xl:w-[50%] flex justify-center"
+              >
+                <Tarjeta
+                  nombre={char.name}
+                  especie={char.species}
+                  imagen={char.image}
+                  ubicacion={char.location.name}
+                  origen={char.origin.name}
+                  estado={
+                    char.status === "Alive"
+                      ? "Vivo"
+                      : char.status === "Dead"
+                      ? "Muerto"
+                      : "Desconocido"
+                  }
+                  esFavorito={favoritos.some((f) => f.id === char.id)}
+                  onClick={() => setSelectedCharacter(char)}
+                  onToggleFavorito={() =>
+                    dispatch(
+                      toggleFavorite({
+                        id: char.id,
+                        nombre: char.name,
+                        especie: char.species,
+                        imagen: char.image,
+                        ubicacion: char.location.name,
+                        origen: char.origin.name,
+                        estado:
+                          char.status === "Alive"
+                            ? "Vivo"
+                            : char.status === "Dead"
+                            ? "Muerto"
+                            : "Desconocido",
+                      })
+                    )
+                  }
+                />
+              </div>
+            ))}
+          </div>
+        )}
       </div>
-
-      {/* Lista de personajes */}
-      {filteredCharacters.length === 0 ? (
-        <div className="text-center py-12">
-          {activo === "favoritos" && favoritos.length === 0 ? (
-            <>
-              <h2 className="text-2xl font-bold text-gray-800 mb-2">
-                Sin favoritos
-              </h2>
-              <p className="text-gray-600 mb-6">
-                Aún no marcaste ningún personaje como favorito.
-              </p>
-              <button
-                onClick={() => setActivo("todos")}
-                className="bg-white border border-green-900 text-green-900 font-semibold py-2 px-6 rounded-full shadow-sm hover:bg-gray-100 transition"
-              >
-                Ver todos los personajes
-              </button>
-            </>
-          ) : (
-            <>
-              <h2 className="text-2xl font-bold text-gray-800 mb-2">Oh no!</h2>
-              <p className="text-gray-600 mb-6">
-                ¡Pareces perdido en tu viaje!
-              </p>
-              <button
-                onClick={() => {
-                  setFilters({ especie: [], genero: [], estado: [] });
-                  setActivo("todos");
-                  resetSearch();
-                }}
-                className="bg-white border border-green-900 text-green-900 font-semibold py-2 px-6 rounded-full shadow-sm hover:bg-gray-100 transition"
-              >
-                Limpiar filtros
-              </button>
-            </>
-          )}
-        </div>
-      ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-          {filteredCharacters.map((char) => (
-            <Tarjeta
-              key={char.id}
-              nombre={char.name}
-              especie={char.species}
-              imagen={char.image}
-              ubicacion={char.location.name}
-              origen={char.origin.name}
-              estado={
-                char.status === "Alive"
-                  ? "Vivo"
-                  : char.status === "Dead"
-                  ? "Muerto"
-                  : "Desconocido"
-              }
-              esFavorito={favoritos.some((f) => f.id === char.id)}
-              onClick={() => setSelectedCharacter(char)}
-              onToggleFavorito={() =>
-                dispatch(
-                  toggleFavorite({
-                    id: char.id,
-                    nombre: char.name,
-                    especie: char.species,
-                    imagen: char.image,
-                    ubicacion: char.location.name,
-                    origen: char.origin.name,
-                    estado:
-                      char.status === "Alive"
-                        ? "Vivo"
-                        : char.status === "Dead"
-                        ? "Muerto"
-                        : "Desconocido",
-                  })
-                )
-              }
-            />
-          ))}
-        </div>
-      )}
-
       <Modal
         isOpen={!!selectedCharacter}
         onClose={() => setSelectedCharacter(null)}
@@ -288,6 +303,7 @@ const CharacterList = ({ searchText, resetSearch }: CharacterListProps) => {
                   })
                 )
               }
+              backgroundImageUrl={detailBg}
             />
           )}
         </Suspense>
@@ -302,7 +318,7 @@ const CharacterList = ({ searchText, resetSearch }: CharacterListProps) => {
           }}
         />
       </Modal>
-    </div>
+    </>
   );
 };
 
