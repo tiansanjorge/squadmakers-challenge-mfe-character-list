@@ -1,5 +1,5 @@
+import React, { useEffect, useState } from "react";
 import ReactDOM from "react-dom";
-import React, { useState } from "react";
 import { MoreVertical, X, ArrowLeft } from "lucide-react";
 
 type AdvancedFiltersModalProps = {
@@ -24,6 +24,12 @@ export const AdvancedFiltersModal = ({
   onAplicar,
 }: AdvancedFiltersModalProps) => {
   const [filtros, setFiltros] = useState(valoresIniciales);
+
+  useEffect(() => {
+    if (isOpen) {
+      setFiltros(valoresIniciales);
+    }
+  }, [isOpen, valoresIniciales]);
 
   const toggle = (tipo: keyof typeof filtros, valor: string) => {
     const actual = filtros[tipo];
@@ -67,7 +73,6 @@ export const AdvancedFiltersModal = ({
           <X className="w-5 h-5" />
         </button>
 
-        {/* Contenido del modal */}
         <h2 className="text-lg text-center sm:text-start font-semibold text-gray-800 mb-8">
           Filtros avanzados
         </h2>

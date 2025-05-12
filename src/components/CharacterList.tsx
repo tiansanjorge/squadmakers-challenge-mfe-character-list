@@ -8,6 +8,7 @@ import { toggleFavorite } from "../store/favoritesSlice";
 import type { RootState } from "../store";
 import detailBg from "../assets/detail-bg.jpg";
 import cross from "../assets/cross.png";
+import { ClipLoader } from "react-spinners";
 
 import "../index.css";
 import { AdvancedFiltersModal } from "./AdvancedFilters";
@@ -262,7 +263,21 @@ const CharacterList = ({ searchText, resetSearch }: CharacterListProps) => {
         onClose={() => setSelectedCharacter(null)}
       >
         <Suspense
-          fallback={<p className="text-center py-8">Cargando detalle...</p>}
+          fallback={
+            <div className="tw-flex tw-justify-center tw-items-center tw-h-32">
+              <div className="tw-w-fit">
+                <ClipLoader
+                  color="#B6DA8B"
+                  size={100}
+                  cssOverride={{
+                    display: "block",
+                    margin: "5% auto",
+                    borderWidth: "6px",
+                  }}
+                />
+              </div>
+            </div>
+          }
         >
           {selectedCharacter && (
             <CharacterDetail
